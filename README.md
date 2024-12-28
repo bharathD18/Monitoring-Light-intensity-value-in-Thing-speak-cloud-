@@ -1,3 +1,7 @@
+NAME : Bharath D
+
+REG NO: 24900875
+
 # Monitoring-Light-intensity-value-in-Thing-speak-cloud
 # Uploading LDR sensor data in Thing Speak cloud
 
@@ -90,11 +94,78 @@ Prototype and build IoT systems without setting up servers or developing web sof
 
  
 # PROGRAM:
+```
+#include <WiFi.h>
+
+#include "ThingSpeak.h" 
+#define ldr_pin 34
+char ssid[] = "kiruthikashalu";   
+char pass[] = "kiruthika";   
+int keyIndex = 0;           
+WiFiClient  client;
+
+unsigned long myChannelNumber = 2792159;
+const int ChannelField = 1;
+const char * myWriteAPIKey = "B0MD6I1QZ0OYU1DC";
+
+int ldrValue = 0;       
+int lightPercentage = 0;
+
+const int darkValue = 4095; 
+const int brightValue = 0;  
+
+
+void setup() 
+{
+  Serial.begin(115200);  
+  pinMode(ldr_pin, INPUT);
+  WiFi.mode(WIFI_STA);   
+  ThingSpeak.begin(client);  
+}
+
+void loop() 
+{
+ 
+  if(WiFi.status() != WL_CONNECTED)
+{
+    Serial.print("Attempting to connect to SSID: ");
+    
+    while(WiFi.status() != WL_CONNECTED)
+    {
+      WiFi.begin(ssid, pass); 
+      Serial.print(".");
+      delay(5000);     
+    } 
+    Serial.println("\nConnected.");
+  }
+
+ 
+  int ldrValue= analogRead(ldr_pin);  
+  
+  lightPercentage = map(ldrValue, darkValue, brightValue, 0, 100);
+
+  
+  lightPercentage = constrain(lightPercentage, 0, 100);
+  Serial.println("Intensity="); 
+  Serial.println(lightPercentage);    
+  Serial.println("%");     
+  
+  ThingSpeak.writeField(myChannelNumber, ChannelField, lightPercentage, myWriteAPIKey);
+  delay(5000); 
+}
+```
+
 # CIRCUIT DIAGRAM:
+![Screenshot 2024-12-27 213441](https://github.com/user-attachments/assets/30f9ad88-4abf-4be8-ab91-8d96e17f3d76)
+
 # OUTPUT:
+![image](https://github.com/user-attachments/assets/e38ec0b7-07b2-43f5-a501-4111adffacd3)
+
+![image](https://github.com/user-attachments/assets/447868d0-ab7f-4aaa-bb0f-8e4c8e542498)
+
+
 # RESULT:
 
 Thus the light intensity values are updated in the Thing speak cloud using ESP32 controller.
-
 
 
